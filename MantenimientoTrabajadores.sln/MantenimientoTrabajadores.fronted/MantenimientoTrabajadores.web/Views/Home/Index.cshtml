@@ -53,7 +53,7 @@
 
         <!-- Botón Bandeja que abre modal -->
         <div class="mb-4">
-            <button class="btn btn-info me-3" data-bs-toggle="modal" data-bs-target="#bandejaModal">Ver Bandeja</button>
+            <button class="btn btn-info me-3" data-bs-toggle="modal" data-bs-target="#bandejaModal" id="btnVerBandeja">Ver Bandeja</button>
         </div>
 
         <div class="table-responsive shadow rounded">
@@ -82,8 +82,16 @@
                             <td>@t.vc_nombre_provincia</td>
                             <td>@t.vc_nombre_distrito</td>
                             <td>
-                                <button class="btn btn-warning btn-sm me-1 btn-editar" data-id="@t.in_id">Editar</button>
-                                <button class="btn btn-danger btn-sm btn-eliminar" data-id="@t.in_id">Eliminar</button>
+                                <button id="btnEditarGuardar" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editarModal" data-id="@t.in_id">Editar</button>
+
+                                <button id="btnEliminar"
+                                        class="btn btn-danger btn-eliminar"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#confirmarEliminarModal"
+                                        data-id="@t.in_id">
+                                    Eliminar
+                                </button>
+
                             </td>
                         </tr>
                     }
@@ -184,7 +192,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="bandejaModalLabel">📥 Bandeja de Trabajadores</h5>
+                    <h5 class="modal-title" id="bandejaModalLabel">Bandeja de Trabajadores</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -197,13 +205,111 @@
                         </select>
                         <button class="btn btn-secondary">🔍 Buscar</button>
                     </div>
-                    <ul class="list-group">
-                        <li class="list-group-item">👤 Trabajador 1</li>
-                        <li class="list-group-item">👤 Trabajador 2</li>
-                    </ul>
+                    <div id="contenidoBandeja">
+                        Cargando...
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Usuario -->
+    <div class="modal fade" id="editarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="crearModalLabel">Editar Trabajador</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label id="tipoDocumento" class="form-label">Tipo Documento</label>
+                                <select class="form-select">
+                                    <option value="0">DNI</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nro Documento</label>
+                                <input id="documentoInput" class="form-control" type="text" />
+                                <div class="invalid-feedback">Este campo es obligatorio</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Nombres</label>
+                                <input id="nombreInput" class="form-control" type="text" />
+                                <div class="invalid-feedback">Este campo es obligatorio</div>
+
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Sexo:</label><br />
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sexo" id="sexoM" value="M" />
+                                    <label class="form-check-label" for="sexoM">Masculino</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sexo" id="sexoF" value="F" />
+                                    <label class="form-check-label" for="sexoF">Femenino</label>
+                                </div>
+                                <div id="sexoError" class="invalid-feedback d-none">
+                                    Selecciona un sexo.
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Departamento</label>
+                                <select id="departamento2" class="form-select">
+                                    <option value="0">-- Selecciona --</option>
+                                    @foreach (var item in ViewBag.Departamentos)
+                                    {
+                                        <option value="@item.Id">@item.NombreDepartamento</option>
+                                    }
+                                </select>
+                                <div class="invalid-feedback">Debes seleccionar un departamento</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Provincia</label>
+                                <select id="provincia2" class="form-select">
+                                    <option value="0">Seleccione provincia</option>
+                                </select>
+                                <div class="invalid-feedback">Debes seleccionar un provincia</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Distrito</label>
+                                <select id="distrito2" class="form-select">
+                                    <option value="0">Seleccione distrito</option>
+                                </select>
+                                <div class="invalid-feedback">Debes seleccionar un distrito</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnCancelarEditar" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="btnGuardarEditar" type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @* modal de confirmacion *@
+    <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmarEliminarLabel">Confirmar Eliminación</h5>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar este registro?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmarEliminarBtn">Sí, eliminar</button>
                 </div>
             </div>
         </div>

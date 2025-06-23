@@ -6,5 +6,8 @@ namespace MantenimientoTrabajadores.web.Services
     {
         Task<List<TrabajadorDto>> GetTrabajadoresAsync();
         Task<bool> CrearTrabajador(TrabajadorRequestDto obj);
+        Task<bool> ActualizarTrabajador(int id,TrabajadorRequestDto obj);
+        Task<bool> EliminarTrabajador(int id);
+        Task<List<BandejaTrabajadoresRegis>> BandejaTrabajador(string sexo);
     }
 }

@@ -75,13 +75,13 @@ namespace MantenimientoTrabajadores.api.Controllers
             {
                 return NotFound(new
                 {
-                    message = "El trabajador ha sido eliminado"
+                    message = "No se ha eliminado al trabajor"
                 });
             }
 
             return Ok(new
             {
-                message = "No se ha eliminado al trabajor"
+                message = "El trabajador ha sido eliminado"
             });
         }
     }
